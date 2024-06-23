@@ -6,24 +6,18 @@ use Phinx\Migration\AbstractMigration;
 
 final class Jawaban extends AbstractMigration
 {
-    /**
-     * Change Method.
-     *
-     * Write your reversible migrations using this method.
-     *
-     * More information on writing migrations is available here:
-     * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
-     *
-     * Remember to call "create()" or "update()" and NOT "save()" when working
-     * with the Table class.
-     */
     public function change(): void
     {
         $jawaban = $this->table('jawaban');
-        $jawaban->addColumn('user_id', 'integer', ['null' => false])
-            ->addColumn('indikator_id', 'integer', ['null' => false])
-            ->addColumn('pertanyaan_id', 'integer', ['null' => false])
-            ->addColumn('pilihan_id', 'integer', ['null' => false])
+        $jawaban
+            ->addColumn('user_id', 'integer', ['null' => false])
+            ->addColumn('indikator_id', 'integer', ['null' => false, 'signed' => false])
+            ->addColumn('pertanyaan_id', 'integer', ['null' => false, 'signed' => false])
+            ->addColumn('pilihan_id', 'integer', ['null' => false, 'signed' => false])
+            ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE', 'update' => 'NO_ACTION'])
+            ->addForeignKey('indikator_id', 'indikator', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION'])
+            ->addForeignKey('pertanyaan_id', 'pertanyaan', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION'])
+            ->addForeignKey('pilihan_id', 'pilihan', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION'])
             ->create();
     }
 }

@@ -66,7 +66,7 @@ if ($role == 'admin') {
                                 <label for="prodi" class="form-label">Prodi</label>
                                 <select class="form-control" aria-label="Default select example" name="prodi" required>
                                     <option selected value="">Pilih prodi</option>
-                                    <option value="Komputerisasi Akuntansi" <?= $prodi == 'Komputerisasi Akuntansi' ? 'selected' : ''; ?>>
+                                    <option value="Komputerisasi Akutansi" <?= $prodi == 'Komputerisasi Akutansi' ? 'selected' : ''; ?>>
                                         Komputerisasi Akuntansi
                                     </option>
                                     <option value="Manajemen Informatika" <?= $prodi == 'Manajemen Informatika' ? 'selected' : ''; ?>>

@@ -106,8 +106,9 @@ $user = $statement->fetch();
         .bd-mode-toggle .dropdown-menu .active .bi {
             display: block !important;
         }
-
-
+        body{
+            background-color: #f8f4fc;
+        }
     </style>
 
 
@@ -171,9 +172,9 @@ $user = $statement->fetch();
 </div>
 
 
-<nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+<nav class="navbar navbar-expand-md navbar fixed-top bg-white">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Survey</a>
+        <a class="navbar-brand" href="#">Survei</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -182,19 +183,26 @@ $user = $statement->fetch();
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
                 <li class="nav-item">
-                <a aria-current="page" href="index.php" class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['index']) ? 'active' : ''; ?>">Home</a>
+                    <a aria-current="page"
+                       href="<?= basename($_SERVER['PHP_SELF']) === 'index.php' ? '#home' : 'index.php'; ?>"
+                       id="homeLink"
+                       class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['index']) ? 'active' : ''; ?>">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a aria-current="page" href="layanan.php" class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['layanan', 'survei']) ? 'active' : ''; ?>">Layanan</a>
+                    <a aria-current="page" href="layanan.php"
+                       class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['layanan', 'survei']) ? 'active' : ''; ?>">Layanan</a>
                 </li>
                 <li class="nav-item">
-                    <a aria-current="page" href="grafik.php" class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['grafik']) ? 'active' : ''; ?>">Grafik</a>
+                    <a aria-current="page"
+                       href="<?= basename($_SERVER['PHP_SELF']) === 'index.php' ? '#chartContainer' : 'index.php'; ?>"
+                       id="chartLink"
+                       class="nav-link <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['index']) ? 'active' : ''; ?>">Grafik</a>
                 </li>
             </ul>
 
         </div>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+            <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-bs-toggle="dropdown" aria-expanded="false">
                 <?= $user['nama'] ?>
             </button>
@@ -208,6 +216,7 @@ $user = $statement->fetch();
 <main class="container" style="padding-top: 5rem;">
     <?= $content; ?>
 </main>
+
 <script src="../../asset/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

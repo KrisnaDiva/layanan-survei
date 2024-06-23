@@ -20,8 +20,9 @@ final class Pertanyaan extends AbstractMigration
     public function change(): void
     {
         $pertanyaan = $this->table('pertanyaan');
-        $pertanyaan->addColumn('indikator_id', 'integer', ['null' => false])
+        $pertanyaan->addColumn('indikator_id', 'integer', ['null' => false, 'signed' => false])
             ->addColumn('pertanyaan', 'string', ['limit' => 255, 'null' => false])
+            ->addForeignKey('indikator_id', 'indikator', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION'])
             ->create();
     }
 }

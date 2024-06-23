@@ -69,7 +69,7 @@ try {
     if ($stmt->execute(array_values($data))) {
         $koneksi->commit();
         echo "<script type='text/javascript'>
-                alert('Ubah data mahasiswa berhasil.');
+                alert('Data mahasiswa berhasil diubah.');
                 window.location.href = '../tampilan/admin/data_mahasiswa.php';
               </script>";
         exit();

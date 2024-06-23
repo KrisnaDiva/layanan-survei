@@ -14,6 +14,12 @@ $sql = "SELECT * FROM indikator";
 $statement = $koneksi->prepare($sql);
 $statement->execute();
 $indikator = $statement->fetchAll();
+
+$sql = "SELECT DISTINCT prodi FROM users WHERE role = 'user'";
+$statement = $koneksi->prepare($sql);
+$statement->execute();
+$prodi = $statement->fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -73,45 +79,32 @@ $indikator = $statement->fetchAll();
             <ul class="nav">
                 <li class="nav-item <?= basename($_SERVER['PHP_SELF'], '.php') == 'index' ? 'active' : ''; ?>">
                     <a href="index.php">
-                        <i class="la la-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
             </ul>
             <div class="dropdown-divider"></div>
-            <p style="color: black; text-align: center">Data Mahasiswa</p>
+            <span style="color: black; display: block; border-bottom: #e9ecef solid 1px; margin-left: 10px;margin-right: 10px" >Data Mahasiswa</span>
             <ul class="nav">
-                <li class="nav-item <?= basename($_SERVER['PHP_SELF'], '.php') == 'data_mahasiswa' ? 'active' : ''; ?>">
+                <li class="nav-item <?= in_array(basename($_SERVER['PHP_SELF'], '.php'), ['data_mahasiswa', 'edit_mahasiswa']) ? 'active' : ''; ?>">
                     <a href="data_mahasiswa.php">
-                        <i class="la la-user"></i>
                         <span>Cek Data Mahasiswa</span>
                     </a>
                 </li>
             </ul>
-            <div class="dropdown-divider"></div>
-            <p style="color: black; text-align: center">Data Survei MI</p>
-            <ul class="nav">
-                <?php foreach ($indikator as $value): ?>
-                <li class="nav-item <?= basename($_SERVER['PHP_SELF'], '.php') == '' ? 'active' : ''; ?>">
-                    <a href="grafik.php">
-                        <i class="la la-user"></i>
-                        <span><?= $value['indikator'] ?></span>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-            <div class="dropdown-divider"></div>
-            <p style="color: black; text-align: center">Data Survei MI</p>
-            <ul class="nav">
-                <?php foreach ($indikator as $value): ?>
-                    <li class="nav-item <?= basename($_SERVER['PHP_SELF'], '.php') == '' ? 'active' : ''; ?>">
-                        <a href="grafik.php">
-                            <i class="la la-user"></i>
-                            <span><?= $value['indikator'] ?></span>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <?php foreach ($prodi as $row): ?>
+                <div class="dropdown-divider"></div>
+                <span style="color: black; display: block; border-bottom: #e9ecef solid 1px; margin-left: 10px; margin-right: 10px" >Data Survei <?= $row['prodi'] ?></span>
+                <ul class="nav">
+                    <?php foreach ($indikator as $value): ?>
+                        <li class="nav-item <?= (in_array(basename($_SERVER['PHP_SELF'], '.php'), ['data_survei', 'edit_survei']) && $_GET['indikator'] == $value['id'] && $_GET['prodi'] == $row['prodi']) ? 'active' : ''; ?>">
+                            <a href="data_survei.php?indikator=<?= $value['id'] ?>&prodi=<?= $row['prodi'] ?>">
+                                <span><?= $value['indikator'] ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endforeach; ?>
         </div>
     </div>
     <div class="main-panel">

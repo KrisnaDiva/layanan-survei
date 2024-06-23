@@ -53,7 +53,7 @@ guest();
                                     <select class="form-select" aria-label="Default select example" name="prodi"
                                             required>
                                         <option selected value="">Pilih prodi</option>
-                                        <option value="Komputerisasi Akuntansi">Komputerisasi Akuntansi</option>
+                                        <option value="Komputerisasi Akutansi">Komputerisasi Akutansi</option>
                                         <option value="Manajemen Informatika">Manajemen Informatika</option>
                                     </select>
                                 </div>
