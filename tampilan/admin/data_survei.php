@@ -83,10 +83,12 @@ $indikator_nama = $statement->fetchColumn();
                             <td style="display: inline-block;">
                                 <a href="edit_survei.php?indikator=<?= $indikator ?>&prodi=<?= $prodi ?>&id=<?= $value['id'] ?>" class="btn btn-warning"
                                    style="display: inline-block;"><i class="las la-edit"></i></a>
-                                <form method="POST" action="../../proses/hapus_mahasiswa.php"
-                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus mahasiswa ini?');"
+                                <form method="POST" action="../../proses/hapus_survei.php"
+                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus survei ini?');"
                                       style="display: inline-block;">
-                                    <input type="hidden" name="id" value="<?= $value['user_id']; ?>">
+                                    <input type="hidden" name="id" value="<?= $value['id']; ?>">
+                                    <input type="hidden" name="indikator_param" value="<?= $indikator ?>">
+                                    <input type="hidden" name="prodi_param" value="<?= $prodi ?>">
                                     <button type="submit" class="btn btn-danger"><i class="las la-trash"></i>
                                     </button>
                                 </form>

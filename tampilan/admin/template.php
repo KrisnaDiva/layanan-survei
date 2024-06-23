@@ -21,7 +21,6 @@ $statement = $koneksi->prepare($sql);
 $statement->execute();
 $prodi = $statement->fetchAll();
 
-
 ?>
 <!DOCTYPE html>
 <html>
