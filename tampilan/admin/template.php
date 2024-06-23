@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../middleware.php';
 require_once __DIR__ . '/../../koneksi.php';
 
 auth();
+admin();
 $koneksi = getKoneksi();
 
 $sql = "SELECT * FROM users WHERE user_id = ?";
@@ -19,6 +20,7 @@ $sql = "SELECT DISTINCT prodi FROM users WHERE role = 'user'";
 $statement = $koneksi->prepare($sql);
 $statement->execute();
 $prodi = $statement->fetchAll();
+
 
 ?>
 <!DOCTYPE html>

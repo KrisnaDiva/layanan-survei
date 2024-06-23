@@ -42,7 +42,7 @@ guest();
                 </div>
                 <div class="card-footer py-3 border-0">
                     <div class="text-center">
-                        Already have an account? <a href="register.php" class="text-dark">Register</a>
+                       Belum punya akun? <a href="register.php" class="text-dark">Register</a>
                     </div>
                 </div>
             </div>

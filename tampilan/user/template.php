@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../middleware.php';
 require_once __DIR__ . '/../../koneksi.php';
 
 auth();
+user();
 $koneksi = getKoneksi();
 
 $sql = "SELECT * FROM users WHERE user_id = ?";
@@ -28,8 +29,9 @@ $user = $statement->fetch();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
     <link href="../../asset/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+
         .bd-placeholder-img {
             font-size: 1.125rem;
             text-anchor: middle;
@@ -106,7 +108,8 @@ $user = $statement->fetch();
         .bd-mode-toggle .dropdown-menu .active .bi {
             display: block !important;
         }
-        body{
+
+        body {
             background-color: #f8f4fc;
         }
     </style>
@@ -172,7 +175,7 @@ $user = $statement->fetch();
 </div>
 
 
-<nav class="navbar navbar-expand-md navbar fixed-top bg-white">
+<nav class="navbar navbar-expand-md navbar fixed-top bg-white shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Survei</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
@@ -216,6 +219,25 @@ $user = $statement->fetch();
 <main class="container" style="padding-top: 5rem;">
     <?= $content; ?>
 </main>
+
+<?php if (basename($_SERVER['PHP_SELF'], '.php') === 'index'): ?>
+    <div style="height: 500px"></div>
+<?php endif; ?>
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mt-5 bg-white border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+            <svg class="bi" width="30" height="24">
+                <use xlink:href="#bootstrap"></use>
+            </svg>
+        </a>
+        <span class="mb-3 mb-md-0 text-muted">© 2024 Survei</span>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="ms-3"><a class="text-muted" href="https://twitter.com"><i class="fab fa-twitter"></i></a></li>
+        <li class="ms-3"><a class="text-muted" href="https://instagram.com"><i class="fab fa-instagram"></i></a></li>
+        <li class="ms-3"><a class="text-muted" href="https://facebook.com"><i class="fab fa-facebook"></i></a></li>
+</footer>
 
 <script src="../../asset/dist/js/bootstrap.bundle.min.js"></script>
 

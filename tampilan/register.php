@@ -70,7 +70,7 @@ guest();
                 </div>
                 <div class="card-footer py-3 border-0">
                     <div class="text-center">
-                        Already have an account? <a href="login.php" class="text-dark">Login</a>
+                        Sudah punya akun? <a href="login.php" class="text-dark">Login</a>
                     </div>
                 </div>
             </div>

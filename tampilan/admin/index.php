@@ -23,6 +23,16 @@ $sql = "SELECT count(*) as jumlah FROM users WHERE role = 'user'";
 $stmt = $koneksi->prepare($sql);
 $stmt->execute();
 $jumlah_mahasiswa = $stmt->fetchColumn();
+
+$sql = "SELECT DISTINCT prodi FROM users WHERE role = 'user'";
+$statement = $koneksi->prepare($sql);
+$statement->execute();
+$prodi = $statement->fetchAll();
+
+$sql = "SELECT COUNT(*) as jumlah FROM jawaban";
+$statement = $koneksi->prepare($sql);
+$statement->execute();
+$jumlah_jawaban = $statement->fetchColumn();
 ?>
 
     <div class="row mb-5">
@@ -58,7 +68,7 @@ $jumlah_mahasiswa = $stmt->fetchColumn();
                         <div class="col-7 d-flex align-items-center">
                             <div class="numbers">
                                 <p class="card-category">Data Survei</p>
-                                <h4 class="card-title">1</h4>
+                                <h4 class="card-title"><?= $jumlah_jawaban ?></h4>
                             </div>
                         </div>
                     </div>
@@ -76,8 +86,18 @@ $jumlah_mahasiswa = $stmt->fetchColumn();
                         </div>
                         <div class="col-7 d-flex align-items-center">
                             <div class="numbers">
-                                <p class="card-category">Cetak</p>
-                                <h4 class="card-title">1</h4>
+                                <p class="card-category">Cetak Laporan</p>
+                                <div class="dropdown">
+                                    <button class="badge bg-white dropdown-toggle" type="button" id="dropdownMenuButton"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Cetak
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <?php foreach ($prodi as $row): ?>
+                                            <a class="dropdown-item" href="cetak.php?prodi=<?= $row['prodi'] ?>">Cetak <?= $row['prodi'] ?></a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -85,7 +105,7 @@ $jumlah_mahasiswa = $stmt->fetchColumn();
             </div>
         </div>
     </div>
-
+    <div id="chartContainer"></div>
 
     <script>
         window.onload = function () {
@@ -106,7 +126,7 @@ $jumlah_mahasiswa = $stmt->fetchColumn();
 
         }
     </script>
-    <div id="chartContainer"></div>
+
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <?php
 $content = ob_get_clean();

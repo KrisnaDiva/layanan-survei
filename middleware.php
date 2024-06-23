@@ -26,3 +26,27 @@ function auth(): void
         exit();
     }
 }
+
+function admin(): void
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if ($_SESSION['role'] != 'admin') {
+        header("Location: ../login.php");
+        exit();
+    }
+}
+
+function user(): void
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if ($_SESSION['role'] != 'user') {
+        header("Location: ../login.php");
+        exit();
+    }
+}
