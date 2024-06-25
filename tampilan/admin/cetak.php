@@ -42,9 +42,33 @@ $sql = "SELECT p.pilihan, COUNT(*) as jumlah
 $stmt = $koneksi->prepare($sql);
 $stmt->execute([$prodi]);
 $dataPoints = array();
+$totalJumlah=0;
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $dataPoints[] = array("y" => $row['jumlah'], "label" => $row['pilihan']);
+    $totalJumlah += $row['jumlah'];
 }
+$sql = "SELECT p.pilihan, COUNT(*) as jumlah
+            FROM jawaban j
+            JOIN users u ON j.user_id = u.user_id
+            JOIN pilihan p ON j.pilihan_id = p.id
+            WHERE u.prodi = ?
+            GROUP BY p.pilihan, u.prodi";
+$stmt = $koneksi->prepare($sql);
+$stmt->execute([$prodi]);
+$dataPoints2 = array();
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $percentage = ($row['jumlah'] / $totalJumlah) * 100;
+    $dataPoints2[] = array("y" => $percentage, "label" => $row['pilihan']);
+}
+$maxValue = 0;
+$maxLabel = '';
+foreach ($dataPoints2 as $dataPoint) {
+    if ($dataPoint['y'] > $maxValue) {
+        $maxValue = $dataPoint['y'];
+        $maxLabel = $dataPoint['label'];
+    }
+}
+
 ?>
 <html>
 <head>
@@ -148,11 +172,25 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         }
         ?>
     </tr>
+    <tr>
+        <td><b>Persentase</b></td>
+        <?php
+        foreach ($total as $count) {
+            $percentage = ($count / $totalJumlah) * 100;
+            ?>
+            <td><b><?= number_format($percentage, 2) ?>%</b></td>
+            <?php
+        }
+        ?>
+    </tr>
     </tbody>
 </table>
+<div id="chartContainer1" style="height: 370px; width: 50%; margin-bottom: 50px"></div>
+<div id="chartContainer2" style="height: 370px; width: 50%;"></div>
+
 <script>
     window.onload = function () {
-        var chart = new CanvasJS.Chart("chartContainer", {
+        var chart = new CanvasJS.Chart("chartContainer1", {
             animationEnabled: true,
             theme: "light2",
             title: {
@@ -166,12 +204,28 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         });
         chart.render();
 
+         // Wait for 1 second before triggering print dialog
+        var chart1 = new CanvasJS.Chart("chartContainer2", {
+            animationEnabled: true,
+            title: {
+                text: "Persentase Survei Layanan"
+            },
+            subtitles: [{
+                text: " <?= $maxLabel ?>"
+            }],
+            data: [{
+                type: "pie",
+                yValueFormatString: "#,##0.00\"%\"",
+                indexLabel: "{label} ({y})",
+                dataPoints: <?php echo json_encode($dataPoints2, JSON_NUMERIC_CHECK); ?>
+            }]
+        });
+          chart1.render();
         setTimeout(function () {
             window.print();
-        }, 1000); // Wait for 1 second before triggering print dialog
+        }, 2000);
     }
 </script>
-<div id="chartContainer" style="height: 370px; width: 50%;"></div>
 
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 </body>

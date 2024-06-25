@@ -6,17 +6,67 @@ require_once __DIR__ . '/../../koneksi.php';
 
 $koneksi = getKoneksi();
 
-$sql = "SELECT p.pilihan, COUNT(*) as jumlah
-        FROM jawaban j
-        JOIN pilihan p ON j.pilihan_id = p.id
-        GROUP BY p.pilihan";
+$prodiFilter = $_GET['prodi'] ?? null;
 
-$stmt = $koneksi->prepare($sql);
-$stmt->execute();
+if ($prodiFilter) {
+    $sql = "SELECT p.pilihan, COUNT(*) as jumlah
+            FROM jawaban j
+            JOIN pilihan p ON j.pilihan_id = p.id
+            JOIN users u ON j.user_id = u.user_id
+            WHERE u.prodi = :prodi
+            GROUP BY p.pilihan";
 
-$dataPoints = array();
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute(['prodi' => $prodiFilter]);
+} else {
+    $sql = "SELECT p.pilihan, COUNT(*) as jumlah
+            FROM jawaban j
+            JOIN pilihan p ON j.pilihan_id = p.id
+            GROUP BY p.pilihan";
+
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute();
+}
+
+$totalJumlah=0;
+$dataPoints1 = array();
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    $dataPoints[] = array("y" => $row['jumlah'], "label" => $row['pilihan']);
+    $dataPoints1[] = array("y" => $row['jumlah'], "label" => $row['pilihan']);
+    $totalJumlah += $row['jumlah'];
+}
+
+if ($prodiFilter) {
+    $sql = "SELECT p.pilihan, COUNT(*) as jumlah
+            FROM jawaban j
+            JOIN pilihan p ON j.pilihan_id = p.id
+            JOIN users u ON j.user_id = u.user_id
+            WHERE u.prodi = :prodi
+            GROUP BY p.pilihan";
+
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute(['prodi' => $prodiFilter]);
+} else {
+    $sql = "SELECT p.pilihan, COUNT(*) as jumlah
+            FROM jawaban j
+            JOIN pilihan p ON j.pilihan_id = p.id
+            GROUP BY p.pilihan";
+
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute();
+}
+$dataPoints2 = array();
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $percentage = ($row['jumlah'] / $totalJumlah) * 100;
+    $dataPoints2[] = array("y" => $percentage, "label" => $row['pilihan']);
+}
+
+$maxValue = 0;
+$maxLabel = '';
+foreach ($dataPoints2 as $dataPoint) {
+    if ($dataPoint['y'] > $maxValue) {
+        $maxValue = $dataPoint['y'];
+        $maxLabel = $dataPoint['label'];
+    }
 }
 
 $sql = "SELECT count(*) as jumlah FROM users WHERE role = 'user'";
@@ -94,7 +144,8 @@ $jumlah_jawaban = $statement->fetchColumn();
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <?php foreach ($prodi as $row): ?>
-                                        <a class="dropdown-item" href="cetak.php?prodi=<?= $row['prodi'] ?>" target="_blank">Cetak <?= $row['prodi'] ?></a>
+                                        <a class="dropdown-item" href="cetak.php?prodi=<?= $row['prodi'] ?>"
+                                           target="_blank">Cetak <?= $row['prodi'] ?></a>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -106,7 +157,14 @@ $jumlah_jawaban = $statement->fetchColumn();
         </div>
     </div>
 </div>
-<div id="chartContainer"></div>
+<select id="prodiSelect" class="form-control mb-5">
+    <option value="">Semua Prodi</option>
+    <?php foreach ($prodi as $row): ?>
+        <option value="<?= $row['prodi'] ?>" <?= $row['prodi'] == $prodiFilter ? 'selected' : '' ?>><?= $row['prodi'] ?></option>
+    <?php endforeach; ?>
+</select>
+<div id="chartContainer" style="margin-bottom: 500px"></div>
+<div id="chart1Container"></div>
 
 <script>
     window.onload = function () {
@@ -115,17 +173,38 @@ $jumlah_jawaban = $statement->fetchColumn();
             animationEnabled: true,
             theme: "light2",
             title: {
-                text: "Grafik Survei Layanan"
+                text: "Grafik Survei Layanan <?= $prodiFilter ?? 'Semua Prodi' ?>"
             },
             data: [{
                 type: "column",
                 yValueFormatString: "#,##0.## response",
-                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+                dataPoints: <?php echo json_encode($dataPoints1, JSON_NUMERIC_CHECK); ?>
             }]
         });
         chart.render();
+        var chart1 = new CanvasJS.Chart("chart1Container", {
+            animationEnabled: true,
+            title: {
+                text: "Persentase Survei Layanan"
+            },
+            subtitles: [{
+                text: " <?= $prodiFilter ?? 'Semua Prodi' ?> <?= $maxLabel ?>"
+            }],
+            data: [{
+                type: "pie",
+                yValueFormatString: "#,##0.00\"%\"",
+                indexLabel: "{label} ({y})",
+                dataPoints: <?php echo json_encode($dataPoints2, JSON_NUMERIC_CHECK); ?>
+            }]
+        });
+        chart1.render();
+
 
     }
+    document.getElementById('prodiSelect').addEventListener('change', function () {
+        var selectedProdi = this.value;
+        window.location.href = 'index.php?prodi=' + selectedProdi;
+    });
 </script>
 
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
