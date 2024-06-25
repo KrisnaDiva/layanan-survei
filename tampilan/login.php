@@ -24,8 +24,8 @@ guest();
                 <div class="card-body p-4">
                     <form action="../proses/login.php" method="POST">
                         <div class="mb-3">
-                            <label class="mb-2 text-muted" for="username">Username</label>
-                            <input id="username" type="text" class="form-control" name="username" required>
+                            <label class="mb-2 text-muted" for="username">NPM</label>
+                            <input id="npm" type="text" class="form-control" name="npm" required>
                             <div class="invalid-feedback">
                             </div>
                         </div>

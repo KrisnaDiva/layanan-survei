@@ -11,6 +11,17 @@ $data = [
     'username' => $_POST['username'],
     'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
 ];
+$npm = $_POST['npm'];
+$npm_prefix = substr($npm, 3, 2);
+
+
+if ($npm_prefix !== '43' && $npm_prefix !== '44') {
+    echo "<script type='text/javascript'>
+        alert('Registrasi gagal, hanya Mahasiswa D3 yang bisa mendaftar.');
+        window.location.href = '../tampilan/register.php';
+      </script>";
+    exit();
+}
 
 $stmt = $koneksi->prepare("SELECT * FROM users WHERE email = ?");
 $stmt->execute([$data['email']]);

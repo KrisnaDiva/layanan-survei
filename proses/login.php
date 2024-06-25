@@ -4,12 +4,12 @@ require_once __DIR__ . '/../koneksi.php';
 session_start();
 
 $koneksi = getKoneksi();
-$username = $_POST['username'];
+$npm = $_POST['npm'];
 $password = $_POST['password'];
 
-$sql = "SELECT * FROM users WHERE username = ?";
+$sql = "SELECT * FROM users WHERE npm = ?";
 $statement = $koneksi->prepare($sql);
-$statement->execute([$username]);
+$statement->execute([$npm]);
 
 if ($row = $statement->fetch()) {
     if (password_verify($password, $row['password'])) {
@@ -30,7 +30,7 @@ if ($row = $statement->fetch()) {
     }
 } else {
     echo "<script type='text/javascript'>
-        alert('Username tidak ditemukan.');
+        alert('NPM tidak ditemukan.');
         window.location.href = '../tampilan/login.php';
       </script>";
 }
