@@ -93,8 +93,6 @@ $pertanyaan = $statement->fetchColumn();
                         </div>
 
                     </div>
-                </div>
-                <div class="card-action text-right">
                     <button class="btn btn-success">Simpan</button>
                 </div>
             </form>

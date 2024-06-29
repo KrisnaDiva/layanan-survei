@@ -6,7 +6,6 @@ $data = [
     'nama' => $_POST['nama'],
     'npm' => $_POST['npm'],
     'fakultas' => $_POST['fakultas'],
-    'prodi' => $_POST['prodi'],
     'email' => $_POST['email'],
     'username' => $_POST['username'],
     'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
@@ -21,6 +20,12 @@ if ($npm_prefix !== '43' && $npm_prefix !== '44') {
         window.location.href = '../tampilan/register.php';
       </script>";
     exit();
+}
+
+if($npm_prefix == '43') {
+    $data['prodi'] = 'Manajemen Informatika';
+} else if ($npm_prefix == '44') {
+    $data['prodi'] = 'Komputerisasi Akuntansi';
 }
 
 $stmt = $koneksi->prepare("SELECT * FROM users WHERE email = ?");
@@ -59,7 +64,7 @@ $stmt = $koneksi->prepare("INSERT INTO users ($fields) VALUES ($placeholders)");
 
 if ($stmt->execute(array_values($data))) {
     echo "<script type='text/javascript'>
-            alert('Registrasi berhasil.');
+            alert('Registrasi berhasil sebagai mahasiswa prodi {$data['prodi']}.');
             window.location.href = '../tampilan/login.php';
           </script>";
 } else {

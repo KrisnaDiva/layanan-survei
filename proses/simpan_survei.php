@@ -25,7 +25,7 @@ try {
 
     echo "<script type='text/javascript'>
             alert('Survei Berhasil Diisi.');
-            window.location.href = '../tampilan/user/layanan.php';
+            window.location.href = '../tampilan/user/index.php';
           </script>";
 } catch (Exception $e) {
     $koneksi->rollBack();

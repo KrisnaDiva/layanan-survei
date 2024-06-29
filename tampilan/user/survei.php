@@ -43,10 +43,10 @@ $pilihan = $statement->fetchAll();
             <p class="card-text">Dengan mengisi survei ini, Anda membantu kami dalam memahami kelebihan dan kekurangan
                 yang ada dalam <?= strtolower($indikator['indikator']) ?></p>
             <form method="POST" action="../../proses/simpan_survei.php">
-                <div class="row mt-5">
+                <div class="row mt-5 justify-content-center">
                     <input type="hidden" name="indikator" value="<?= $indikator['id'] ?>">
                     <?php foreach ($pertanyaan as $value): ?>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5 mb-3">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title"><?= $value['pertanyaan'] ?></h5>
@@ -63,7 +63,7 @@ $pilihan = $statement->fetchAll();
                         </div>
                     <?php endforeach; ?>
                     <div class="mt-4 col-6 mx-auto">
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <button class="btn btn-primary w-100" type="submit">Submit</button>
                     </div>
                 </div>
             </form>

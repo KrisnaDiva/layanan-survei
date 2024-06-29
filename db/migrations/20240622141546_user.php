@@ -24,7 +24,7 @@ final class User extends AbstractMigration
             ->addColumn('nama', 'string', ['limit' => 100])
             ->addColumn('npm', 'string', ['limit' => 9])
             ->addColumn('fakultas', 'string', ['limit' => 50])
-            ->addColumn('prodi', 'enum', ['values' => ['Manajemen Informatika', 'Komputerisasi Akutansi']])
+            ->addColumn('prodi', 'enum', ['values' => ['Manajemen Informatika', 'Komputerisasi Akuntansi']])
             ->addColumn('email', 'string', ['limit' => 64])
             ->addColumn('username', 'string', ['limit' => 64])
             ->addColumn('password', 'string', ['limit' => 255])

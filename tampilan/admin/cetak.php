@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../koneksi.php';
 
 $koneksi = getKoneksi();
 
-$prodi = isset($_GET['prodi']) ? $_GET['prodi'] : null;
+$prodi = isset($_GET['prodi']) ? $_GET['prodi'] : 'Manajemen Informatika';
 
 if ($prodi) {
     $sql = "SELECT j.indikator_id, j.pilihan_id, COUNT(*) as jumlah
@@ -68,6 +68,7 @@ foreach ($dataPoints2 as $dataPoint) {
         $maxLabel = $dataPoint['label'];
     }
 }
+
 
 ?>
 <html>
@@ -185,48 +186,153 @@ foreach ($dataPoints2 as $dataPoint) {
     </tr>
     </tbody>
 </table>
-<div id="chartContainer1" style="height: 370px; width: 50%; margin-bottom: 50px"></div>
-<div id="chartContainer2" style="height: 370px; width: 50%;"></div>
 
-<script>
-    window.onload = function () {
-        var chart = new CanvasJS.Chart("chartContainer1", {
-            animationEnabled: true,
-            theme: "light2",
-            title: {
-                text: "Grafik survei layanan"
-            },
-            data: [{
-                type: "column",
-                yValueFormatString: "#,##0.## response",
-                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
-            }]
-        });
-        chart.render();
 
-         // Wait for 1 second before triggering print dialog
-        var chart1 = new CanvasJS.Chart("chartContainer2", {
-            animationEnabled: true,
-            title: {
-                text: "Persentase Survei Layanan"
-            },
-            subtitles: [{
-                text: " <?= $maxLabel ?>"
-            }],
-            data: [{
-                type: "pie",
-                yValueFormatString: "#,##0.00\"%\"",
-                indexLabel: "{label} ({y})",
-                dataPoints: <?php echo json_encode($dataPoints2, JSON_NUMERIC_CHECK); ?>
-            }]
-        });
-          chart1.render();
-        setTimeout(function () {
-            window.print();
-        }, 2000);
+<?php
+$sql = "SELECT COUNT(*) as jumlah FROM jawaban";
+$statement = $koneksi->prepare($sql);
+$statement->execute();
+$jumlah_jawaban = $statement->fetchColumn();
+
+$sql = "SELECT count(*) as jumlah FROM users WHERE role = 'user'";
+$stmt = $koneksi->prepare($sql);
+$stmt->execute();
+$jumlah_mahasiswa = $stmt->fetchColumn();
+
+$sql = "SELECT pilihan FROM pilihan";
+$statement = $koneksi->prepare($sql);
+$statement->execute();
+$pilihan = $statement->fetchAll(PDO::FETCH_COLUMN, 0);
+$colors = [
+    'rgba(255, 99, 71, 1)', // red
+    'rgba(9, 31, 242, 0.8)', // blue
+    'rgba(240, 255, 45, 0.8)', // yellow
+    'rgba(17, 231, 42, 0.8)', // green
+    'rgba(255, 0, 255, 0.8)', // purple
+];
+
+// Fetch data based on selected prodi
+$sql = "SELECT i.indikator, p.pilihan, COUNT(*) as jumlah
+        FROM jawaban j
+        JOIN pilihan p ON j.pilihan_id = p.id
+        JOIN indikator i ON j.indikator_id = i.id
+        JOIN users u ON j.user_id = u.user_id";
+
+if ($prodi !== 'Semua Prodi') {
+    $sql .= " WHERE u.prodi = :prodi";
+}
+
+$sql .= " GROUP BY i.indikator, p.pilihan";
+$statement = $koneksi->prepare($sql);
+
+if ($prodi !== 'Semua Prodi') {
+    $statement->bindParam(':prodi', $prodi);
+}
+
+$statement->execute();
+
+$results = $statement->fetchAll(PDO::FETCH_ASSOC);
+$data = [];
+foreach ($results as $row) {
+    $data[$row['indikator']][$row['pilihan']] = $row['jumlah'];
+}
+$labels = array_keys($data);
+$datasets = [];
+foreach ($pilihan as $index => $pil) {
+    $datasets[] = [
+        'label' => $pil,
+        'data' => array_column($data, $pil, 0),
+        'backgroundColor' => $colors[$index % count($colors)],
+        'borderColor' => $colors[$index % count($colors)],
+        'borderWidth' => 1
+    ];
+}
+$indicators = array_keys($data);
+
+// Calculate total counts and percentages
+$percentages = [];
+foreach ($indicators as $indicator) {
+    $total = array_sum($data[$indicator]);
+    foreach ($pilihan as $pil) {
+        $count = $data[$indicator][$pil] ?? 0;
+        $percentages[$indicator][$pil] = $total ? ($count / $total) * 100 : 0;
     }
+}
+
+?>
+
+<div style="width: 800px">
+    <canvas id="barChart" class="mb-5"></canvas>
+    <div class="row">
+        <?php foreach ($indicators as $index => $indicator): ?>
+            <div class="chart-container col-md-6 col-lg-3">
+                <canvas id="chart-<?php echo $index; ?>"></canvas>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = function() {
+    setTimeout(function() {
+        window.print();
+    }, 2000); // Delay of 2 seconds
+}
+    const barCtx = document.getElementById('barChart');
+    const pieCtxs = <?php echo json_encode(array_map(function ($index) {
+        return 'chart-' . $index;
+    }, array_keys($indicators))); ?>;
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($labels); ?>,
+            datasets: <?php echo json_encode($datasets); ?>
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    const colors = <?php echo json_encode($colors); ?>;
+    const pilihan = <?php echo json_encode($pilihan); ?>;
+    const data = <?php echo json_encode($data); ?>;
+    const percentages = <?php echo json_encode($percentages); ?>;
+
+    pieCtxs.forEach((ctxId, index) => {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+        const indicator = <?php echo json_encode($indicators); ?>[index];
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: pilihan.map(pil => pil + ' (' + percentages[indicator][pil].toFixed(2) + '%)'),
+                datasets: [{
+                    data: pilihan.map(pil => data[indicator][pil] || 0),
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: indicator
+                    }
+                }
+            }
+        });
+    });
 </script>
 
-<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 </body>
 </html>
