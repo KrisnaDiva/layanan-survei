@@ -276,7 +276,7 @@ foreach ($indicators as $indicator) {
     window.onload = function() {
     setTimeout(function() {
         window.print();
-    }, 2000); // Delay of 2 seconds
+    }, 2000);
 }
     const barCtx = document.getElementById('barChart');
     const pieCtxs = <?php echo json_encode(array_map(function ($index) {

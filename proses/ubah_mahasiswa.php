@@ -22,10 +22,28 @@ try {
         'nama' => $_POST['nama'],
         'npm' => $_POST['npm'],
         'fakultas' => $_POST['fakultas'],
-        'prodi' => $_POST['prodi'],
         'email' => $_POST['email'],
         'username' => $_POST['username'],
     ];
+
+    $npm = $_POST['npm'];
+    $npm_prefix = substr($npm, 3, 2);
+
+
+    if ($npm_prefix !== '43' && $npm_prefix !== '44') {
+        echo "<script type='text/javascript'>
+        alert('Ubah data gagal, hanya Mahasiswa D3 yang bisa didaftarkan.');
+        window.location.href = '../tampilan/admin/edit_mahasiswa.php?id=$id';
+      </script>";
+        exit();
+    }
+
+    if($npm_prefix == '43') {
+        $data['prodi'] = 'Manajemen Informatika';
+    } else if ($npm_prefix == '44') {
+        $data['prodi'] = 'Komputerisasi Akuntansi';
+    }
+
 
     if ($user['email'] != $data['email']) {
         $stmt = $koneksi->prepare("SELECT * FROM users WHERE email = ?");

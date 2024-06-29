@@ -5,13 +5,11 @@ session_start();
 require_once __DIR__ . '/../../koneksi.php';
 $koneksi = getKoneksi();
 
-// Fetch available prodies
 $sql = "SELECT DISTINCT prodi FROM users WHERE role = 'user'";
 $statement = $koneksi->prepare($sql);
 $statement->execute();
 $prodies = $statement->fetchAll(PDO::FETCH_COLUMN, 0);
 
-// Default selected prodi
 $selectedProdi = isset($_GET['prodi']) ? $_GET['prodi'] : 'Manajemen Informatika';
 $_SESSION['selectedProdi'] = $selectedProdi;
 
@@ -25,7 +23,6 @@ $stmt = $koneksi->prepare($sql);
 $stmt->execute();
 $jumlah_mahasiswa = $stmt->fetchColumn();
 
-// Default selected prodi
 $selectedProdi = isset($_GET['prodi']) ? $_GET['prodi'] : 'Manajemen Informatika';
 
 $sql = "SELECT pilihan FROM pilihan";
@@ -40,7 +37,6 @@ $colors = [
     'rgba(255, 0, 255, 0.8)', // purple
 ];
 
-// Fetch data based on selected prodi
 $sql = "SELECT i.indikator, p.pilihan, COUNT(*) as jumlah
         FROM jawaban j
         JOIN pilihan p ON j.pilihan_id = p.id
@@ -78,7 +74,6 @@ foreach ($pilihan as $index => $pil) {
 }
 $indicators = array_keys($data);
 
-// Calculate total counts and percentages
 $percentages = [];
 foreach ($indicators as $indicator) {
     $total = array_sum($data[$indicator]);
@@ -174,7 +169,7 @@ foreach ($indicators as $indicator) {
 <div class="container pt-5">
     <form method="get" class="mb-4">
         <label for="prodi">Pilih Prodi:</label>
-        <select id="prodi" name="prodi" onchange="this.form.submit()">
+        <select id="prodi" class="form-control" name="prodi" onchange="this.form.submit()">
             <?php foreach ($prodies as $prodi): ?>
                 <option value="<?php echo htmlspecialchars($prodi); ?>" <?php echo $selectedProdi === $prodi ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($prodi); ?>

@@ -44,11 +44,6 @@ if ($role == 'admin') {
                                 <input type="text" class="form-control" name="npm" value="<?= $npm ?>"
                                        placeholder="Masukkan NPM" required>
                             </div>
-                            <div class="form-group">
-                                <label for="fakultas" class="form-label">Fakultas</label>
-                                <input type="text" class="form-control" name="fakultas" value="<?= $fakultas ?>"
-                                       placeholder="Masukkan fakultas" required readonly>
-                            </div>
 
                         </div>
                         <div class="col-md-6">
@@ -62,22 +57,13 @@ if ($role == 'admin') {
                                 <input type="text" class="form-control" name="username" value="<?= $username ?>"
                                        placeholder="Masukkan username" required>
                             </div>
-                            <div class="form-group">
-                                <label for="prodi" class="form-label">Prodi</label>
-                                <select class="form-control" aria-label="Default select example" name="prodi" required>
-                                    <option selected value="">Pilih prodi</option>
-                                    <option value="Komputerisasi Akutansi" <?= $prodi == 'Komputerisasi Akutansi' ? 'selected' : ''; ?>>
-                                        Komputerisasi Akuntansi
-                                    </option>
-                                    <option value="Manajemen Informatika" <?= $prodi == 'Manajemen Informatika' ? 'selected' : ''; ?>>
-                                        Manajemen Informatika
-                                    </option>
-                                </select>
-                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-action text-right">
+                    <div class="form-group">
+                        <label for="fakultas" class="form-label">Fakultas</label>
+                        <input type="text" class="form-control" name="fakultas" value="<?= $fakultas ?>"
+                               placeholder="Masukkan fakultas" required readonly>
+                    </div>
                     <button class="btn btn-success">Simpan</button>
                 </div>
             </form>
